@@ -70,7 +70,6 @@ impl<A: App> std::fmt::Debug for Instance<A> {
 }
 
 pub fn start<A: App>(app: A, node: web::Node) -> Mailbox<A::Message> {
-    set_panic_hook();
     let mut vnode = Text::new("!");
     let new_node = vnode.create().into();
     node.parent_node()
@@ -88,14 +87,4 @@ pub fn start<A: App>(app: A, node: web::Node) -> Mailbox<A::Message> {
     };
     instance.render();
     instance.mailbox()
-}
-
-fn set_panic_hook() {
-    static PANIC_HOOK: Once = Once::new();
-
-    PANIC_HOOK.call_once(|| {
-        std::panic::set_hook(Box::new(|panic| {
-            crate::console::error(&panic.to_string());
-        }));
-    });
 }
